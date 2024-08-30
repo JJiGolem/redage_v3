@@ -131,17 +131,21 @@ namespace NeptuneEvo.Fractions.LSNews.LiveStream
         }
         
         [ServerEvent(Event.PlayerDisconnected)]
-        public static void OnPlayerDisconnected(ExtPlayer player, DisconnectionType type, string reason)
+        public static void OnPlayerDisconnected(GTANetworkAPI.Player player, DisconnectionType type, string reason)
         {
+            ExtPlayer extPlayer = player as ExtPlayer;
+            if (extPlayer is null)
+                return;
+
             if (_stream != null)
             {
-                if (_stream.IsOwner(player))
+                if (_stream.IsOwner(extPlayer))
                 {
                     // останавливаем стрим т.к игрок вышел
                     _stream = null;
                     return;
                 }
-                _stream.RemoveFromCallersList(player);
+                _stream.RemoveFromCallersList(extPlayer);
             }
         }
         

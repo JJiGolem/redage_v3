@@ -607,10 +607,14 @@ namespace NeptuneEvo.Jobs
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public void onPlayerDeathHandler(ExtPlayer player, ExtPlayer entityKiller, uint weapon)
+        public void onPlayerDeathHandler(Player rPlayer, Player entityKiller, uint weapon)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
                 if (!player.IsCharacterData()) return;
                 
                 if (MinerJobPlayersOreTypeInfo.ContainsKey(player.Value)) MinerJobPlayersOreTypeInfo.Remove(player.Value);

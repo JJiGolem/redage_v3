@@ -407,12 +407,16 @@ namespace NeptuneEvo.NewCasino
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public void OnPlayerDeath(ExtPlayer player, ExtPlayer killer, uint reason)
+        public void OnPlayerDeath(Player player, Player killer, uint reason)
         {
             try
             {
-                if (!player.IsCharacterData()) return;
-                BlackjackLeave(player, false);
+                ExtPlayer extPlayer = player as ExtPlayer;
+
+                if (extPlayer is null || !extPlayer.IsCharacterData())
+                    return;
+
+                BlackjackLeave(extPlayer, false);
             }
             catch (Exception e)
             {

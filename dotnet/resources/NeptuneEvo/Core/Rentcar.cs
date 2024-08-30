@@ -105,13 +105,24 @@ namespace NeptuneEvo.Core
     class Rentcar : Script
     {
         private static readonly nLog Log = new nLog("Core.Rentcar");
-   
 
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void Event_OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatid)
+        public Rentcar()
+        {
+            RageEvents.ServerEvents.OnPlayerEnterVehicleEvent += Event_OnPlayerEnterVehicle;
+        }
+
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void Event_OnPlayerEnterVehicle(Player rPlayer, Vehicle rVehicle, sbyte seatid)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
+                ExtVehicle vehicle = rVehicle as ExtVehicle;
+                if (player is null)
+                    return;
 
                 var sessionData = player.GetSessionData();
                 if (sessionData == null)
@@ -925,29 +936,24 @@ namespace NeptuneEvo.Core
                 if (vehicleCreate == null)
                     return;
 
-                //
+                Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
 
                 switch (rentCarsData.Job)
                 {
                     case JobsId.Lawnmower:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
                         Jobs.Lawnmower.StartWork(player);
                         break;
                     case JobsId.Postman:               
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
                         vehicleCreate.SetMod(48, 1);
                         vehicleCreate.SetMod(0, 1);
                         break;
                     case JobsId.Taxi:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
                         Players.Phone.Taxi.Orders.Repository.StartWork(player);
                         break;
                     case JobsId.Bus:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
                         Jobs.Bus.StartWork(player);
                         break;
                     case JobsId.CarMechanic:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
                         Players.Phone.Mechanic.Orders.Repository.StartWork(player);
                         break;
                     case JobsId.Trucker:
@@ -957,11 +963,9 @@ namespace NeptuneEvo.Core
                             vehicleCreate.SetMod(18, 0);
                             vehicleCreate.SetMod(13, 2);
                         }
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
                         Jobs.Truckers.StartWork(player);
                         break;
                     case JobsId.CashCollector:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicleCreate);
                         Jobs.Collector.StartWork(player);
                         break;
                 }
@@ -1023,34 +1027,29 @@ namespace NeptuneEvo.Core
             {
                 vehicleLocalData.IsOwnerExit = false;
                 sessionData.RentData = new RentData(vehicleLocalData.RentCarPrice, vehicleLocalData.RentCarTime, vehicle, vehicleLocalData.RentCarModel, vehicleLocalData.NumberPlate, vehicleLocalData.WorkId != JobsId.None);
-                
+
+                Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
+
                 switch (vehicleLocalData.WorkId)
                 {
                     case JobsId.Lawnmower:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
                         Jobs.Lawnmower.StartWork(player);
                         break;
                     case JobsId.Postman:               
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
                         break;
                     case JobsId.Taxi:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
                         Players.Phone.Taxi.Orders.Repository.StartWork(player);
                         break;
                     case JobsId.Bus:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
                         Jobs.Bus.StartWork(player);
                         break;
                     case JobsId.CarMechanic:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
                         Players.Phone.Mechanic.Orders.Repository.StartWork(player);
                         break;
                     case JobsId.Trucker:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
                         Jobs.Truckers.StartWork(player);
                         break;
                     case JobsId.CashCollector:
-                        Jobs.Repository.OnPlayerExitVehicle(player, vehicle);
                         Jobs.Collector.StartWork(player);
                         break;
                 }

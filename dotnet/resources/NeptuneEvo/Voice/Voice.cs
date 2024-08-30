@@ -28,6 +28,11 @@ namespace NeptuneEvo.Voice
 
         public static int DangerButtonChecker { get; set; } = -1;
 
+        public Voice()
+        {
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += Event_PlayerExitVehicle;
+        }
+
         public static void PlayerQuit(ExtPlayer player, string reson)
         {
             try
@@ -540,8 +545,8 @@ namespace NeptuneEvo.Voice
             }
         }*/
 
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void Event_PlayerExitVehicle(ExtPlayer player, ExtVehicle veh)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void Event_PlayerExitVehicle(ExtPlayer player, ExtVehicle veh)
         {
             try
             {

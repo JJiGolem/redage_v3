@@ -75,10 +75,10 @@ namespace NeptuneEvo.Core
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public void onPlayerDeathHandler(ExtPlayer player, ExtPlayer entityKiller, uint weapon) => LandingEnd(player);
+        public void onPlayerDeathHandler(Player player, Player entityKiller, uint weapon) => LandingEnd((ExtPlayer)player);
         
         [ServerEvent(Event.PlayerDisconnected)]
-        public void OnPlayerDisconnected(ExtPlayer player, DisconnectionType type, string reason) => LandingEnd(player);
+        public void OnPlayerDisconnected(Player player, DisconnectionType type, string reason) => LandingEnd((ExtPlayer)player);
 
 
         /*private static readonly nLog Log = new nLog("Core.SeatingArrangements");

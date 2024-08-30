@@ -25,6 +25,12 @@ namespace NeptuneEvo.VehicleModel
     class Drone : Script
     {
         private static readonly nLog Log = new nLog("VehicleModel.Drone");
+
+        public Drone()
+        {
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += Event_OnPlayerExitVehicle;
+        }
+
         [Command(AdminCommands.Drone)]
         public void CreateDrone(ExtPlayer player)
         {
@@ -92,8 +98,8 @@ namespace NeptuneEvo.VehicleModel
             }
         }
 
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicleDrone)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicleDrone)
         {
             try
             {

@@ -313,10 +313,18 @@ namespace NeptuneEvo.Functions
         }
 
         [ServerEvent(Event.PlayerEnterColshape)]
-        public void OnPlayerEnterColshape(ExtColShape shape, ExtPlayer player)
+        public void OnPlayerEnterColshape(ColShape rShape, Player rPlayer)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
+                ExtColShape shape = rShape as ExtColShape;
+                if (player is null)
+                    return;
+
                 var sData = shape.GetColShapeData();
                 if (sData == null) return;
                 if (!player.IsCharacterData()) return;
@@ -387,10 +395,18 @@ namespace NeptuneEvo.Functions
             }
         }
         [ServerEvent(Event.PlayerExitColshape)]
-        public void OnPlayerExitColShape(ExtColShape shape, ExtPlayer player)
+        public void OnPlayerExitColShape(ColShape rShape, Player rPlayer)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
+                ExtColShape shape = rShape as ExtColShape;
+                if (player is null)
+                    return;
+
                 var sData = shape.GetColShapeData();
                 if (sData == null) return;
                 if (!player.IsCharacterData()) return;

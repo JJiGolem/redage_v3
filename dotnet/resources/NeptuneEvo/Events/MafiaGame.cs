@@ -1647,18 +1647,22 @@ namespace NeptuneEvo.Core
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public void OnPlayerDeath(ExtPlayer player, Player killer, uint reason)
+        public void OnPlayerDeath(Player player, Player killer, uint reason)
         {
             try
             {
-                var sessionData = player.GetSessionData();
+                ExtPlayer extPlayer = player as ExtPlayer;
+                if (extPlayer is null)
+                    return;
+
+                var sessionData = extPlayer.GetSessionData();
                 if (sessionData == null) return;
 
                 int index = sessionData.InMafiaLobby;
                 if (index >= 0 && LobbyList.ContainsKey(index) && player.HasSharedData("mafiaGameRole") && player.GetSharedData<int>("mafiaGameRole") >= 1)
                 {
                     if (LobbyList[index].MafiaPlayers.Contains(player))
-                        LeaveMafiaGame(player);
+                        LeaveMafiaGame(extPlayer);
                 }
             }
             catch (Exception e)

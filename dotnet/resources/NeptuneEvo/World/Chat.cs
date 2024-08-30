@@ -19,10 +19,14 @@ namespace NeptuneEvo.World
     {
         private static readonly nLog Log = new nLog("World.Chat");
         [ServerEvent(Event.ChatMessage)]
-        public void API_onChatMessage(ExtPlayer player, string message)
+        public void API_onChatMessage(Player rplayer, string message)
         {
             try
             {
+                ExtPlayer player = rplayer as ExtPlayer;
+                if (player is null)
+                    return;
+
                 var sessionData = player.GetSessionData();
                 if (sessionData == null) return;
                 var characterData = player.GetCharacterData();

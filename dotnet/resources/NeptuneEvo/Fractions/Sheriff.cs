@@ -51,8 +51,12 @@ namespace NeptuneEvo.Fractions
         private static Vector3 VehicleRepairPosition = new Vector3(-448.36835, 5994.5537, 31.32247); 
          
         public static Vector3 FirstGunsPosition = new Vector3(1844.3673, 3692.2087, 34.266937); 
-        public static Vector3 SecondGunsPosition = new Vector3(-436.12234, 5999.6006, 31.7); 
-         
+        public static Vector3 SecondGunsPosition = new Vector3(-436.12234, 5999.6006, 31.7);
+
+        public Sheriff()
+        {
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += Event_OnPlayerExitVehicle;
+        }
  
         [ServerEvent(Event.ResourceStart)] 
         public void onResourceStart() 
@@ -190,9 +194,10 @@ namespace NeptuneEvo.Fractions
             GameLog.Money($"server", $"player({characterData.UUID})", Main.PoliceAward, $"policeAward"); 
             Notify.Send(player, NotifyType.Info, NotifyPosition.BottomCenter, LangFunc.GetText(LangType.Ru, DataName.Reward, Main.PoliceAward), 3000); 
             return; 
-        } 
-        [ServerEvent(Event.PlayerExitVehicle)] 
-        public void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle) 
+        }
+
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle) 
         { 
             try 
             { 

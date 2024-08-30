@@ -17,14 +17,18 @@ using NeptuneEvo.Jobs.Models;
 using NeptuneEvo.Chars;
 using NeptuneEvo.Players.Popup.List.Models;
 using NeptuneEvo.Quests;
-using NeptuneEvo.VehicleData.LocalData;
-using NeptuneEvo.VehicleData.LocalData.Models;
 
 namespace NeptuneEvo.Jobs
 {
     class Gopostal : Script
     {
         private static readonly nLog Log = new nLog("Jobs.Gopostal");
+
+        public Gopostal()
+        {
+            RageEvents.ServerEvents.OnPlayerEnterVehicleEvent += OnPlayerEnterVehicle;
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += OnPlayerExitVehicle;
+        }
 
         [ServerEvent(Event.ResourceStart)]
         public void onResourceStart()
@@ -213,8 +217,8 @@ namespace NeptuneEvo.Jobs
             return false;
         }
         
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
         {
             var sessionData = player.GetSessionData();
             if (sessionData == null) 
@@ -231,8 +235,8 @@ namespace NeptuneEvo.Jobs
                 Attachments.RemoveAttachment(player, Attachments.AttachmentsName.Postal);
         }
         
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
         {
             var sessionData = player.GetSessionData();
             if (sessionData == null) 

@@ -24,6 +24,11 @@ namespace NeptuneEvo.Jobs
     {
         private static readonly nLog Log = new nLog("Jobs.Truckers");
 
+        public Truckers()
+        {
+            RageEvents.ServerEvents.OnPlayerEnterVehicleEvent += OnPlayerEnterVehicle;
+        }
+
         [ServerEvent(Event.ResourceStart)]
         public void OnResourceStart()
         {
@@ -122,8 +127,9 @@ namespace NeptuneEvo.Jobs
             }
             return false;
         }
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
+
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
         {
             var sessionData = player.GetSessionData();
             if (sessionData == null) 

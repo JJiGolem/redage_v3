@@ -36,7 +36,10 @@ namespace NeptuneEvo.Events
         public static Dictionary<int, StreetRaceData> StreetRaceList = new Dictionary<int, StreetRaceData>();
         public static Dictionary<int, int> PlayerToStreetRaceId = new Dictionary<int, int>();
 
-
+        public StreetRace()
+        {
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += Event_OnPlayerExitVehicle;
+        }
 
         [RemoteEvent("server.streetrace.open")]
         public static void OpenStreetRaceMenu(ExtPlayer player)
@@ -141,19 +144,20 @@ namespace NeptuneEvo.Events
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public void OnPlayerDeath(ExtPlayer player, ExtPlayer entityKiller, uint weapon)
+        public void OnPlayerDeath(Player player, Player entityKiller, uint weapon)
         {
             try
             {
-                ClearData(player, 1);
+                ClearData((ExtPlayer)player, 1);
             }
             catch (Exception e)
             {
                 Log.Write($"OnPlayerDeath Exception: {e.ToString()}");
             }
         }
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
+
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
         {
             try
             {

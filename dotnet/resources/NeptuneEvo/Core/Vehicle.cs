@@ -31,6 +31,7 @@ using NeptuneEvo.Table.Models;
 using NeptuneEvo.VehicleData.LocalData;
 using NeptuneEvo.VehicleData.LocalData.Models;
 using NeptuneEvo.VehicleData.Models;
+using NeptuneEvo.RageEvents;
 
 namespace NeptuneEvo.Core
 {
@@ -44,6 +45,11 @@ namespace NeptuneEvo.Core
         public static ConcurrentDictionary<string, VehicleData.Models.VehicleData> Vehicles = new ConcurrentDictionary<string, VehicleData.Models.VehicleData>();
         public static List<string> VehicleNumbers = new List<string>();
 
+        public VehicleManager()
+        {
+            ServerEvents.OnPlayerEnterVehicleEvent += onPlayerEnterVehicleHandler;
+            ServerEvents.OnPlayerExitVehicleEvent += Event_OnPlayerExitVehicle;
+        }
 
         public static void AddVehicleNumber(string number)
         {
@@ -367,10 +373,14 @@ namespace NeptuneEvo.Core
         }
         
         [ServerEvent(Event.PlayerEnterVehicleAttempt)]
-        public void onPlayerEnterVehicleAttemptHandler(ExtPlayer player, ExtVehicle vehicle, sbyte seatid)
+        public void onPlayerEnterVehicleAttemptHandler(Player rPlayer, Vehicle vehicle, sbyte seatid)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
                 var characterData = player.GetCharacterData();
                 if (characterData == null) return;
                 if (vehicle == CasinoVeh || characterData.DemorganTime >= 1) Trigger.StopAnimation(player);
@@ -381,8 +391,8 @@ namespace NeptuneEvo.Core
             }
         }
 
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void onPlayerEnterVehicleHandler(ExtPlayer player, ExtVehicle vehicle, sbyte seatid)
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void onPlayerEnterVehicleHandler(ExtPlayer player, ExtVehicle vehicle, sbyte seatid)
         {
             try
             {
@@ -543,10 +553,18 @@ namespace NeptuneEvo.Core
         }
 
         [ServerEvent(Event.PlayerExitVehicleAttempt)]
-        public void OnPlayerExitVehicleHandler(ExtPlayer player, ExtVehicle vehicle)
+        public void OnPlayerExitVehicleHandler(Player rPlayer, Vehicle rVehicle, sbyte seat)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
+                ExtVehicle vehicle = rVehicle as ExtVehicle;
+                if (player is null)
+                    return;
+
                 var sessionData = player.GetSessionData();
                 if (sessionData == null) return;
                 
@@ -572,8 +590,8 @@ namespace NeptuneEvo.Core
             }
         }
 
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
         {
             try
             {

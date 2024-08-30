@@ -30,6 +30,11 @@ namespace NeptuneEvo.Core
 
         public static Vector3 CamPosition = new Vector3(1123.929, -639.87, 56.724);
 
+        public CarRoom()
+        {
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += onPlayerExitVehicleHandler;
+        }
+
         private static byte Step = 0;
         private static Vector3[] TestDrivePositions = new Vector3[7]
         {
@@ -528,16 +533,15 @@ namespace NeptuneEvo.Core
         }
         public static void timer_exitVehicle(ExtPlayer player, bool quit = false)
         {
-            if (OnExitTestDrive (player) && !quit)
+            if (OnExitTestDrive(player) && !quit)
                 Notify.Send(player, NotifyType.Info, NotifyPosition.BottomCenter, $"Время, выделенное на тест-драйв, закончилось.", 3000);
         }
 
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void onPlayerExitVehicleHandler(ExtPlayer player, ExtVehicle vehicle)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void onPlayerExitVehicleHandler(ExtPlayer player, ExtVehicle vehicle)
         {
-            if (OnExitTestDrive (player))
+            if (OnExitTestDrive(player))
                 Notify.Send(player, NotifyType.Info, NotifyPosition.BottomCenter, $"Тест-драйв был окончен, так как Вы покинули транспорт.", 3000);
-           
         }
 
         public static bool OnExitTestDrive(ExtPlayer player, bool isDeath = false)

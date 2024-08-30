@@ -18,12 +18,18 @@ using NeptuneEvo.Table.Tasks.Player;
 using NeptuneEvo.VehicleData.LocalData;
 using NeptuneEvo.VehicleData.LocalData.Models;
 using Redage.SDK;
+using NeptuneEvo.RageEvents;
 
 namespace NeptuneEvo.Fractions
 {
     class CarDelivery : Script
     {
         private static readonly nLog Log = new nLog("Fractions.CrimeMissions");
+
+        public CarDelivery()
+        {
+            ServerEvents.OnPlayerEnterVehicleEvent += Event_PlayerEnterVehicle;
+        }
 
         private static uint[] GangsVehiclesHashes = new uint[15] {
             (uint)VehicleHash.Emperor,
@@ -342,8 +348,8 @@ namespace NeptuneEvo.Fractions
             }
         }
 
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void Event_PlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seat)
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void Event_PlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seat)
         {
             try
             {

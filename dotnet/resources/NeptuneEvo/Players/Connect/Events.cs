@@ -18,8 +18,9 @@ namespace NeptuneEvo.Players.Connect
         private static readonly nLog Log = new nLog("Players.Connect.Events");
         
         [ServerEvent(Event.PlayerConnected)]
-        private void OnPlayerConnected(ExtPlayer player)
+        private void OnPlayerConnected(Player rplayer)
         {
+            ExtPlayer player = rplayer as ExtPlayer;
             if (player == null)
                 return;
             

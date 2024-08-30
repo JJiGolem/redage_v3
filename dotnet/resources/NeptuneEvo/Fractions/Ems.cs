@@ -20,14 +20,12 @@ using NeptuneEvo.Fractions.Player;
 using NeptuneEvo.Handles;
 using NeptuneEvo.Players.Phone.Messages.Models;
 using NeptuneEvo.Players.Popup.List.Models;
-using NeptuneEvo.Quests;
 using NeptuneEvo.Quests.Models;
 using NeptuneEvo.Table.Models;
 using NeptuneEvo.Table.Tasks.Models;
 using NeptuneEvo.Table.Tasks.Player;
 using NeptuneEvo.VehicleData.LocalData;
 using NeptuneEvo.VehicleData.LocalData.Models;
-using Newtonsoft.Json;
 
 namespace NeptuneEvo.Fractions
 {
@@ -228,36 +226,46 @@ namespace NeptuneEvo.Fractions
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public void OnPlayerDeathHandler(ExtPlayer player, ExtPlayer entityKiller, uint weapon)
+        public void OnPlayerDeathHandler(GTANetworkAPI.Player player, GTANetworkAPI.Player killer, uint weapon)
         {
             try
             {
-                var sessionData = player.GetSessionData();
+                ExtPlayer extPlayer = player as ExtPlayer;
+                if (extPlayer is null)
+                    return;
+
+                ExtPlayer extKiller = killer as ExtPlayer;
+                if (extKiller is null)
+                    return;
+
+                var sessionData = extPlayer.GetSessionData();
                 if (sessionData == null) return;
                 sessionData.PositionCaptureOrBizwar = null;
-                var characterData = player.GetCharacterData();
+                var characterData = extPlayer.GetCharacterData();
                 if (characterData == null) return;
 
                 if (sessionData.KilledData.Killed != null)
                 {
-                    entityKiller = sessionData.KilledData.Killed;
+                    extKiller = sessionData.KilledData.Killed;
                     weapon = sessionData.KilledData.Weapon;
                     sessionData.KilledData.Killed = null;
                 }
                 
-                Admin.onPlayerDeathHandler(player, entityKiller, weapon, player.Position);
+                Admin.onPlayerDeathHandler(extPlayer, extKiller, weapon, player.Position);
 
-                if (Attachments.HasAttachment(player, Attachments.AttachmentsName.Binoculars))
+                if (Attachments.HasAttachment(extPlayer, Attachments.AttachmentsName.Binoculars))
                 {
-                    Trigger.ClientEvent(player, "binoculars.stop");
-                    Attachments.RemoveAttachment(player, Attachments.AttachmentsName.Binoculars);
+                    Trigger.ClientEvent(extPlayer, "binoculars.stop");
+                    Attachments.RemoveAttachment(extPlayer, Attachments.AttachmentsName.Binoculars);
                 }
 
                 try
                 {
-                    if (entityKiller.IsCharacterData() && Events.AirDrop.Repository.IsPlayerToEvents(player) && Events.AirDrop.Repository.IsPlayerToEvents(entityKiller))
+                    if (extKiller.IsCharacterData() && 
+                        Events.AirDrop.Repository.IsPlayerToEvents(extPlayer) && 
+                        Events.AirDrop.Repository.IsPlayerToEvents(extKiller))
                     {
-                        Events.AirDrop.Repository.AirDropDeathHandler(player, entityKiller);
+                        Events.AirDrop.Repository.AirDropDeathHandler(extPlayer, extKiller);
                     }
                 }
                 catch (Exception e)
@@ -265,14 +273,21 @@ namespace NeptuneEvo.Fractions
                     Log.Write($"onPlayerDeathHandler - AirDropTeamsInfoUpdate Exception: {e.ToString()}");
                 }
 
-                var killerCharacterData = entityKiller.GetCharacterData();
-                var killerSessionData = entityKiller.GetSessionData();
+                var killerCharacterData = extKiller.GetCharacterData();
+                var killerSessionData = extKiller.GetSessionData();
 
                 try
                 {
-                    if (killerCharacterData != null && killerSessionData != null && !Voice.Voice.isGov(entityKiller.GetFractionId()) && player != entityKiller)
+                    if (killerCharacterData != null && 
+                        killerSessionData != null && 
+                        !Voice.Voice.isGov(extKiller.GetFractionId()) && 
+                        player != extKiller)
                     {
-                        if ((!entityKiller.HasSharedData("IS_MASK") || !entityKiller.GetSharedData<bool>("IS_MASK")) && (killerSessionData.InAirsoftLobby == -1) && killerSessionData.InTanksLobby == -1 && !killerSessionData.WarData.IsWarZone)
+                        if ((!extKiller.HasSharedData("IS_MASK") || 
+                            !extKiller.GetSharedData<bool>("IS_MASK")) && 
+                            (killerSessionData.InAirsoftLobby == -1) && 
+                            killerSessionData.InTanksLobby == -1 && 
+                            !killerSessionData.WarData.IsWarZone)
                         {
                             byte correctLevel = 2;
                             if (killerCharacterData.WantedLVL != null)
@@ -282,7 +297,7 @@ namespace NeptuneEvo.Fractions
                             }
 
                             WantedLevel wantedLevel = new WantedLevel(correctLevel, LangFunc.GetText(LangType.Ru, DataName.Police), DateTime.Now, LangFunc.GetText(LangType.Ru, DataName.Murder));
-                            Police.setPlayerWantedLevel(entityKiller, wantedLevel);
+                            Police.setPlayerWantedLevel(extKiller, wantedLevel);
                         }
                     }
                 }
@@ -293,54 +308,57 @@ namespace NeptuneEvo.Fractions
 
                 if (sessionData.InTanksLobby > -1)
                 {
-                    Events.TankRoyale.DeathCheck(player);
+                    Events.TankRoyale.DeathCheck(extPlayer);
                     return;
                 }
 
                 if (sessionData.InAirsoftLobby >= 0)
                 {
-                    if (player.GetSharedData<int>("PlayerAirsoftTeam") == 0 || player.GetSharedData<int>("PlayerAirsoftTeam") == 1 || Events.Airsoft.AirsoftPlayerData.ContainsKey(player) && Events.Airsoft.AirsoftPlayerData[player].IsGunGamePlayer == true)
+                    if (player.GetSharedData<int>("PlayerAirsoftTeam") == 0 || 
+                        player.GetSharedData<int>("PlayerAirsoftTeam") == 1 || 
+                        Events.Airsoft.AirsoftPlayerData.ContainsKey(extPlayer) && 
+                        Events.Airsoft.AirsoftPlayerData[extPlayer].IsGunGamePlayer == true)
                     {
-                        Events.Airsoft.DeathCheck(player, entityKiller, weapon);
+                        Events.Airsoft.DeathCheck(extPlayer, extKiller, weapon);
                         return;
                     }
                     else
                     {
-                        Events.Airsoft.DeathCheck(player, entityKiller, weapon);
+                        Events.Airsoft.DeathCheck(extPlayer, extKiller, weapon);
                     }
                 }
-                if (EventSys.AdminEvent.EventState != 0 && EventSys.ExitFromMP(player))
+                if (EventSys.AdminEvent.EventState != 0 && EventSys.ExitFromMP(extPlayer))
                 {                    
                     Notify.Send(player, NotifyType.Info, NotifyPosition.BottomCenter, LangFunc.GetText(LangType.Ru, DataName.MPfail), 7000);
                     return;
                 }
-                if (CarRoom.OnExitTestDrive (player, isDeath: true)) // Если вдруг что-то пойдёт не так и игрок в тест-драйве умрёт с GM'ом каким-то чудом.
+                if (CarRoom.OnExitTestDrive (extPlayer, isDeath: true)) // Если вдруг что-то пойдёт не так и игрок в тест-драйве умрёт с GM'ом каким-то чудом.
                 {
                     Notify.Send(player, NotifyType.Info, NotifyPosition.BottomCenter, LangFunc.GetText(LangType.Ru, DataName.TestDriveExpired), 5000);
                     return;
                 }
                 
-                Chars.Repository.Event_PlayerDeath(player);
+                Chars.Repository.Event_PlayerDeath(extPlayer);
                 
-                if (World.War.Repository.OnPlayerDeath(player, entityKiller, weapon))
+                if (World.War.Repository.OnPlayerDeath(extPlayer, extKiller, weapon))
                     return;
                 
-                FractionCommands.onPlayerDeathHandler(player, entityKiller, weapon);
-                SafeMain.onPlayerDeathHandler(player, entityKiller, weapon);
-                Army.Event_PlayerDeath(player, entityKiller, weapon);
-                Police.Event_PlayerDeath(player, entityKiller, weapon);
-                Houses.HouseManager.Event_OnPlayerDeath(player, entityKiller, weapon);
+                FractionCommands.onPlayerDeathHandler(extPlayer, extKiller, weapon);
+                SafeMain.onPlayerDeathHandler(extPlayer, extKiller, weapon);
+                Army.Event_PlayerDeath(extPlayer, extKiller, weapon);
+                Police.Event_PlayerDeath(extPlayer, extKiller, weapon);
+                Houses.HouseManager.Event_OnPlayerDeath(extPlayer, extKiller, weapon);
                 //Jobs.Collector.Event_PlayerDeath(player, entityKiller, weapon);
                 //Jobs.Gopostal.Event_PlayerDeath(player, entityKiller, weapon);
-                EventSys.Event_PlayerDeath(player, entityKiller, weapon);
+                EventSys.Event_PlayerDeath(extPlayer, extKiller, weapon);
                 characterData.IsAlive = false;
 
-                Trigger.ClientEvent(player, "UpdateTime");
+                Trigger.ClientEvent(extPlayer, "UpdateTime");
 
                 if (characterData.DemorganTime >= 1 || characterData.ArrestTime >= 1)
                 {
                     sessionData.DeathData.IsDying = true;
-                    ReviveFunc(player);
+                    ReviveFunc(extPlayer);
                 }
                 else
                 {
@@ -362,7 +380,7 @@ namespace NeptuneEvo.Fractions
                     //
                     if (!sessionData.DeathData.IsDying)
                     {
-                        DeathConfirm(player);
+                        DeathConfirm(extPlayer);
 
                         //var fracId = player.GetFractionId();
                         
@@ -378,8 +396,10 @@ namespace NeptuneEvo.Fractions
                             player.SetSharedData("InDeath", true);
                             int medics = Manager.FractionMembersCount ((int) Models.Fractions.EMS);
 
-                            if (entityKiller.IsCharacterData() && entityKiller != player) Trigger.ClientEvent(player, "openHospitalDialog", LangFunc.GetText(LangType.Ru, DataName.YouAreDeadFromPlayer, entityKiller.Value, medics));
-                            else Trigger.ClientEvent(player, "openHospitalDialog", LangFunc.GetText(LangType.Ru, DataName.YouAreDead, medics));
+                            if (extKiller.IsCharacterData() && extKiller != player)
+                                Trigger.ClientEvent(extPlayer, "openHospitalDialog", LangFunc.GetText(LangType.Ru, DataName.YouAreDeadFromPlayer, extKiller.Value, medics));
+                            else
+                                Trigger.ClientEvent(extPlayer, "openHospitalDialog", LangFunc.GetText(LangType.Ru, DataName.YouAreDead, medics));
                         //}
                     }
                 }

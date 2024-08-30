@@ -513,7 +513,7 @@ namespace NeptuneEvo.Events
         }
 
         [ServerEvent(Event.VehicleDamage)]
-        public static void OnVehicleDamageHandler(ExtVehicle vehicle, float bodyHealthLoss, float engineHealthLoss)
+        public static void OnVehicleDamageHandler(Vehicle vehicle, float bodyHealthLoss, float engineHealthLoss)
         {
             try
             {

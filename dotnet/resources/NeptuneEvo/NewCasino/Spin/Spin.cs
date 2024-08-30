@@ -281,10 +281,14 @@ namespace NeptuneEvo.NewCasino
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public void OnPlayerDeath(ExtPlayer player, ExtPlayer killer, uint reason)
+        public void OnPlayerDeath(Player rPlayer, Player killer, uint reason)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
                 if (!player.IsCharacterData() || !PlayerData.ContainsKey(player))
                     return;
                 Disconnect(player, DisconnectionType.Timeout);

@@ -38,12 +38,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Reference Include="Bootstrapper">
-      <HintPath>Bootstrapper.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  
-  <ItemGroup>
     <PackageReference Update="Microsoft.NETCore.App" Version="2.0.0" />
   </ItemGroup>
 
@@ -79,6 +73,12 @@
     <Folder Include="PedSystem\Hunting\Models" />
     <Folder Include="Players\Disconnect\" />
     <Folder Include="Players\Phone\BlackList\Models" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Bootstrapper">
+      <HintPath>..\..\libs\Bootstrapper.dll</HintPath>
+    </Reference>
   </ItemGroup>
   
 <PropertyGroup> 

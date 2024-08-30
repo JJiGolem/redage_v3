@@ -2,6 +2,7 @@
 using Redage.SDK;
 using System;
 using Redage.SDK.Models;
+using System.IO;
 
 namespace NeptuneEvo.Functions
 {
@@ -20,6 +21,9 @@ namespace NeptuneEvo.Functions
                 $"Database={config.DataBase};" +
                 $"SslMode=None;";
 
+            if (Directory.Exists("backups") is false)
+                Directory.CreateDirectory("backups");
+
             using (MySqlConnection conn = new MySqlConnection(connection))
             {
                 using (MySqlCommand cmd = new MySqlCommand())
@@ -29,7 +33,7 @@ namespace NeptuneEvo.Functions
                         cmd.Connection = conn;
                         conn.Open();
                         var date = DateTime.Now;
-                        mb.ExportToFile($"backups/BD_Day{date.Day}.sql");
+                        mb.ExportToFile($"backups/{date:dd.MM.yyyy HH.mm}.sql");
                         conn.Close();
                     }
                 }

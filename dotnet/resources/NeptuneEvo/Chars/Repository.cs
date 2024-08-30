@@ -52,12 +52,12 @@ namespace NeptuneEvo.Chars
         private static readonly nLog Log = new nLog("Chars.Repository");
 
         [ServerEvent(Event.PlayerDeath)]
-        public void onPlayerDeathHandler(ExtPlayer player, ExtPlayer entityKiller, uint weapon)
+        public void onPlayerDeathHandler(Player player, Player entityKiller, uint weapon)
         {
             try
             {
-                RouletteClose(player);
-                ChangeAutoNumberClear(player);
+                RouletteClose((ExtPlayer)player);
+                ChangeAutoNumberClear((ExtPlayer)player);
             }
             catch (Exception e)
             {
@@ -8417,14 +8417,18 @@ public static IReadOnlyDictionary<ClothesComponent, ItemId> ClothesComponentToIt
         }
 
         [ServerEvent(Event.PlayerDeath)]
-        public static void OnPlayerDeath(ExtPlayer player, ExtPlayer killer, uint reason)
+        public static void OnPlayerDeath(Player player, Player killer, uint reason)
         {
             try
             {
-                var sessionData = player.GetSessionData();
+                ExtPlayer extPlayer = player as ExtPlayer;
+                if (extPlayer is null)
+                    return;
+
+                var sessionData = extPlayer.GetSessionData();
                 if (sessionData == null) return;
                 else if (sessionData.SappeData == -1) return;
-                SappeEnd(player, -1);
+                SappeEnd(extPlayer, -1);
             }
             catch (Exception e)
             {

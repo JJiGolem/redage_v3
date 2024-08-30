@@ -108,5 +108,15 @@ namespace Redage.SDK
         {
             Trigger.ClientEvent(player, "notifyToKey", type, pos, msg, time, keyCode);
         }
+
+        public static void SendBanner(Player player, string title, string msg)
+        {
+            Trigger.ClientEvent(player, "notifyBanner", title, msg);
+        }
+
+        public static void ClearBanner(Player player)
+        {
+            Trigger.ClientEvent(player, "clearBanner");
+        }
     }
 }

@@ -884,9 +884,9 @@ namespace NeptuneEvo
         }
         #region Player
         [ServerEvent(Event.PlayerDisconnected)]
-        public void OnPlayerDisconnected(ExtPlayer player, DisconnectionType type, string reason)
+        public void OnPlayerDisconnected(Player player, DisconnectionType type, string reason)
         {
-            NeptuneEvo.Players.Disconnect.Repository.OnPlayerDisconnect(player, type, reason);
+            NeptuneEvo.Players.Disconnect.Repository.OnPlayerDisconnect((ExtPlayer)player, type, reason);
         }
         public static void SetUpEverything(ExtPlayer player)
         {
@@ -3201,7 +3201,7 @@ namespace NeptuneEvo
                 Thread.CurrentThread.Name = "Main";
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
-                Timers.StartOnceTask(0, BackupSql.Backup);
+                Task.Run(BackupSql.Backup);
 
                 MySQL.Init();
 
@@ -3344,7 +3344,8 @@ namespace NeptuneEvo
                 }
                 */
                 
-                Utils.Redis.Repository.Init();
+                // TODO: redis on
+                //Utils.Redis.Repository.Init();
                 
                 Timers.Init();
 
@@ -3418,6 +3419,7 @@ namespace NeptuneEvo
         public static DateTime ServerDateTime = DateTime.Now;
         
         private int TickServer = 0;
+        
         [ServerEvent(Event.Update)]
         public void OnUpdate() => TickServer++;
 

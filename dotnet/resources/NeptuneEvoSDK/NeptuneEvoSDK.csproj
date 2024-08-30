@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <Reference Include="Bootstrapper">
-      <HintPath>..\NeptuneEvo\Bootstrapper.dll</HintPath>
+      <HintPath>..\..\libs\Bootstrapper.dll</HintPath>
     </Reference>
   </ItemGroup>
 

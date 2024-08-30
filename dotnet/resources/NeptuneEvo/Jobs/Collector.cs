@@ -25,6 +25,12 @@ namespace NeptuneEvo.Jobs
 
         private static Vector3 TakeMoneyPos = new Vector3(915.9069, -1265.255, 24.50912);
 
+        public Collector()
+        {
+            RageEvents.ServerEvents.OnPlayerEnterVehicleEvent += OnPlayerEnterVehicle;
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += OnPlayerExitVehicle;
+        }
+
         [ServerEvent(Event.ResourceStart)]
         public void Event_ResourceStart()
         {
@@ -98,8 +104,8 @@ namespace NeptuneEvo.Jobs
         }
         
         
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
         {
             var sessionData = player.GetSessionData();
             if (sessionData == null) 
@@ -116,8 +122,8 @@ namespace NeptuneEvo.Jobs
                 Attachments.RemoveAttachment(player, Attachments.AttachmentsName.MoneyBag);
         }
         
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
         {
             var sessionData = player.GetSessionData();
             if (sessionData == null) 

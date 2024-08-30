@@ -19,6 +19,7 @@ using NeptuneEvo.Character;
 using NeptuneEvo.Jobs.Models;
 using NeptuneEvo.VehicleData.LocalData;
 using NeptuneEvo.VehicleData.LocalData.Models;
+using NeptuneEvo.RageEvents;
 
 //Disapproved by god himself
 
@@ -47,6 +48,12 @@ namespace NeptuneEvo.Core
     public class VehicleStreaming : Script
     {
         private static readonly nLog Log = new nLog("Core.VehicleSync");
+
+        public VehicleStreaming()
+        {
+            ServerEvents.OnPlayerEnterVehicleEvent += VehStreamEnter;
+        }
+
         //This is the data object which will be synced to vehicle
         public static void DeleteVehicleData(ExtVehicle vehicle, VehicleAccess vehicleAccess, string numberPlate = null)
         {
@@ -162,8 +169,8 @@ namespace NeptuneEvo.Core
             }
         }
 
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void VehStreamEnter(ExtPlayer player, ExtVehicle vehicle, sbyte seat) 
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void VehStreamEnter(ExtPlayer player, ExtVehicle vehicle, sbyte seat) 
         {
             try
             {

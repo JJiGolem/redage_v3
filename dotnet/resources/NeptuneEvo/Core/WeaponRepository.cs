@@ -765,10 +765,14 @@ namespace NeptuneEvo.Core
         };
 
         [ServerEvent(Event.PlayerWeaponSwitch)]
-        public void OnPlayerWeaponSwitch(ExtPlayer player, WeaponHash oldWeapon, WeaponHash newWeapon)
+        public void OnPlayerWeaponSwitch(Player rPlayer, WeaponHash oldWeapon, WeaponHash newWeapon)
         {
             try
             {
+                ExtPlayer player = rPlayer as ExtPlayer;
+                if (player is null)
+                    return;
+
                 var characterData = player.GetCharacterData();
                 if (characterData == null) return;
 

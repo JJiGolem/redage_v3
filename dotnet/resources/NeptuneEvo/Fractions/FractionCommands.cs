@@ -22,6 +22,7 @@ using NeptuneEvo.Table.Tasks.Models;
 using NeptuneEvo.Table.Tasks.Player;
 using NeptuneEvo.VehicleData.LocalData;
 using NeptuneEvo.VehicleData.LocalData.Models;
+using NeptuneEvo.RageEvents;
 
 namespace NeptuneEvo.Fractions
 {
@@ -29,8 +30,13 @@ namespace NeptuneEvo.Fractions
     {
         private static readonly nLog Log = new nLog("Fractions.FractionCommands");
 
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void onPlayerEnterVehicleHandler(ExtPlayer player, ExtVehicle vehicle, sbyte seatid)
+        public FractionCommands()
+        {
+            ServerEvents.OnPlayerEnterVehicleEvent += onPlayerEnterVehicleHandler;
+        }
+
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void onPlayerEnterVehicleHandler(ExtPlayer player, ExtVehicle vehicle, sbyte seatid)
         {
             try
             {

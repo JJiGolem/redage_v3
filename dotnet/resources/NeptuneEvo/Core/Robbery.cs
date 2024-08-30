@@ -31,6 +31,12 @@ namespace NeptuneEvo.Core
 {
     public class SafeMain : Script
     {
+        public SafeMain()
+        {
+            RageEvents.ServerEvents.OnPlayerEnterVehicleEvent += onPlayerEnterVehicle;
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += onPlayerExitVehicle;
+        }
+
         // config, use meta.xml instead
         public static int SafeRespawnTime = 10800;
         public static int SafeMinLoot = 150;
@@ -224,11 +230,15 @@ namespace NeptuneEvo.Core
             }
         }
 
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public void onPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatid)
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void onPlayerEnterVehicle(Player rplayer, Vehicle vehicle, sbyte seatid)
         {
             try
             {
+                ExtPlayer player = rplayer as ExtPlayer;
+                if (player is null)
+                    return;
+
                 var characterData = player.GetCharacterData();
                 if (characterData == null) return;
                 ItemId Bags = Chars.Repository.GetItemData(player, "accessories", 8).ItemId;
@@ -253,8 +263,8 @@ namespace NeptuneEvo.Core
                 Log.Write($"onPlayerEnterVehicle Exception: {e.ToString()}");
             }
         }
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void onPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void onPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
         {
             try
             {

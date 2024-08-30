@@ -22,6 +22,11 @@ namespace NeptuneEvo.Jobs
     {
         private static readonly nLog Log = new nLog("Jobs.Bus");
 
+        public Bus()
+        {
+            RageEvents.ServerEvents.OnPlayerEnterVehicleEvent += OnPlayerEnterVehicle;
+        }
+
         private static List<string> BusWaysNames = new List<string>
         {
             "[Городской 1] EMS - Old City Hall - Market - Driving School - NEWS - LSPD",
@@ -888,8 +893,8 @@ namespace NeptuneEvo.Jobs
             Notify.Send(player, NotifyType.Info, NotifyPosition.BottomCenter, LangFunc.GetText(LangType.Ru, DataName.YouRentBus, BusWaysNames[way]), 10000);
         }
 
-        [ServerEvent(Event.PlayerEnterVehicle)]
-        public static void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
+        //[ServerEvent(Event.PlayerEnterVehicle)]
+        private void OnPlayerEnterVehicle(ExtPlayer player, ExtVehicle vehicle, sbyte seatId)
         {
             if (seatId == (int)VehicleSeat.Driver)
                 return;

@@ -991,13 +991,17 @@ namespace NeptuneEvo.Core
             }
         }
         [ServerEvent(Event.PlayerDeath)]
-        public void onPlayerDeathHandler(ExtPlayer player, ExtPlayer entityKiller, uint weapon)
+        public void onPlayerDeathHandler(Player player, Player entityKiller, uint weapon)
         {
             try
             {
-                var sessionData = player.GetSessionData();
+                ExtPlayer extPlayer = player as ExtPlayer;
+                if (extPlayer is null)
+                    return;
+
+                var sessionData = extPlayer.GetSessionData();
                 if (sessionData == null) return;
-                if (!player.IsCharacterData()) return;
+                if (!extPlayer.IsCharacterData()) return;
                 if (sessionData.AttachToVehicle != null)
                 {
                     var vehicle = (ExtVehicle) sessionData.AttachToVehicle;
@@ -1008,9 +1012,9 @@ namespace NeptuneEvo.Core
                     }
                     sessionData.AttachToVehicle = null;
                     Trigger.ClientEventInRange(player.Position, 250f, "client.vehicle.trunk.detachPlayer", player.Value, vehicle.Value, false);
-                    Trigger.StopAnimation(player);
+                    Trigger.StopAnimation(extPlayer);
                     player.ResetSharedData("AttachToVehicle");
-                    Trigger.ClientEvent(player, "setPocketEnabled", false);
+                    Trigger.ClientEvent(extPlayer, "setPocketEnabled", false);
                 }
             }
             catch (Exception e)

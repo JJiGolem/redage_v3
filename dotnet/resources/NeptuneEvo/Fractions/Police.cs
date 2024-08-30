@@ -56,7 +56,11 @@ namespace NeptuneEvo.Fractions
         private static Vector3 StockPosition = new Vector3(486.9647, -995.9626, 30.68962);
         private static Vector3 VehicleBoostPosition = new Vector3(1408.2571, 183.5331, -49.280865);//463.32733, -1019.0836, 28.10166
         private static Vector3 VehicleRepairPosition = new Vector3(447.07394, -1013.2826, 28.541023);
-        
+
+        public Police()
+        {
+            RageEvents.ServerEvents.OnPlayerExitVehicleEvent += Event_OnPlayerExitVehicle;
+        }
 
         [ServerEvent(Event.ResourceStart)]
         public void onResourceStart()
@@ -188,8 +192,8 @@ namespace NeptuneEvo.Fractions
             return;
         }
 
-        [ServerEvent(Event.PlayerExitVehicle)]
-        public void Event_OnPlayerExitVehicle(ExtPlayer player, Vehicle vehicle)
+        //[ServerEvent(Event.PlayerExitVehicle)]
+        private void Event_OnPlayerExitVehicle(ExtPlayer player, ExtVehicle vehicle)
         {
             try
             {
